@@ -3,7 +3,6 @@ import collections
 import itertools
 import json
 
-import lexicon
 import matches
 
 
@@ -20,10 +19,11 @@ def simulate(node, target):
 
 def main(src):
     node = json.load(src)
+    candidates = node["candidates"]
     res = list(
         filter(
             lambda x: x[1] != -1,
-            ((w, simulate(node, w)) for w in lexicon.lexicon),
+            ((w, simulate(node, w)) for w in candidates),
         )
     )
     tot = sum(s[1] for s in res)
