@@ -1,13 +1,14 @@
 import argparse
 import collections
 import json
+import random
 
 import heuristic_guess
 import lexicon
 import matches
 
 
-def expand_graph(is_hard_mode, candidates, depth):
+def expand_graph(is_hard_mode, candidates, is_random, depth):
     if not candidates:
         raise ValueError("Error: No candidates.")
     if len(candidates) == 1:
@@ -17,9 +18,14 @@ def expand_graph(is_hard_mode, candidates, depth):
             "depth": depth,
             "candidates": candidates,
         }
-    guess = heuristic_guess.guess(
-        guesses=candidates if is_hard_mode else lexicon.lexicon,
-        targets=candidates,
+    guesses = candidates if is_hard_mode else lexicon.lexicon
+    guess = (
+        random.choice(guesses)
+        if is_random
+        else heuristic_guess.guess(
+            guesses=guesses,
+            targets=candidates,
+        )
     )
     gather = collections.defaultdict(list)
     for c in candidates:
@@ -27,7 +33,7 @@ def expand_graph(is_hard_mode, candidates, depth):
     return {
         "guess": guess,
         "response": {
-            resp: expand_graph(is_hard_mode, grp, depth + 1)
+            resp: expand_graph(is_hard_mode, grp, is_random, depth + 1)
             for resp, grp in gather.items()
             if resp != "22222"
         },
@@ -36,9 +42,9 @@ def expand_graph(is_hard_mode, candidates, depth):
     }
 
 
-def main(is_hard_mode, is_resticted):
+def main(is_hard_mode, is_resticted, is_random):
     initial_set = lexicon.daily_words if is_resticted else lexicon.lexicon
-    res = expand_graph(is_hard_mode, initial_set, 0)
+    res = expand_graph(is_hard_mode, initial_set, is_random, 0)
     print(json.dumps(res))
 
 
@@ -54,5 +60,10 @@ if __name__ == "__main__":
         action="store_true",
         help="Assume word from solution set",
     )
+    parser.add_argument(
+        "--random",
+        action="store_true",
+        help="Random guesses",
+    )
     args = parser.parse_args()
-    main(args.hard_mode, args.restricted)
+    main(args.hard_mode, args.restricted, args.random)
