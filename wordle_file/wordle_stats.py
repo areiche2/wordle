@@ -11,8 +11,6 @@ def simulate(node, target):
         resp = matches.matches(target=target, guess=node["guess"])
         if resp == "22222":
             return i
-        if resp is None or resp not in node["response"]:
-            break
         node = node["response"][resp]
     return -1
 
