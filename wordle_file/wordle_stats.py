@@ -7,21 +7,23 @@ import matches
 
 
 def simulate(node, target):
+    res = []
     for i in itertools.count(start=1):
-        resp = matches.matches(target=target, guess=node["guess"])
+        guess = node["guess"]
+        resp = matches.matches(target=target, guess=guess)
+        res.append((guess, resp, len(node["candidates"])))
         if resp == "22222":
-            return i
+            return res
         node = node["response"][resp]
-    return -1
+    return []
 
 
-def main(src):
-    node = json.load(src)
+def stats(node):
     candidates = node["candidates"]
     res = list(
         filter(
-            lambda x: x[1] != -1,
-            ((w, simulate(node, w)) for w in candidates),
+            lambda x: x[1] > 0,
+            ((w, len(simulate(node, w))) for w in candidates),
         )
     )
     tot = sum(s[1] for s in res)
@@ -35,6 +37,24 @@ def main(src):
         print(w, len(g), *g[:5], sep="\t")
 
 
+def single_word(node, word):
+    if word not in node["candidates"]:
+        print("Word not in solution set.")
+        return
+    res = simulate(node, word)
+    trans = str.maketrans("012", "⬛🟨🟩")
+    for w, g, n in res:
+        print(w, g.translate(trans), n, sep="\t")
+
+
+def main(src, word):
+    node = json.load(src)
+    if word:
+        single_word(node, word)
+    else:
+        stats(node)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Wordle Solver")
     parser.add_argument(
@@ -42,4 +62,10 @@ if __name__ == "__main__":
         type=argparse.FileType("r"),
         help="JSON file with responses",
     )
-    main(parser.parse_args().json)
+    parser.add_argument(
+        "--word",
+        type=str,
+        help="Evaluate a single word",
+    )
+    args = parser.parse_args()
+    main(args.json, args.word)
