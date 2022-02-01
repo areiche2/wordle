@@ -2,6 +2,7 @@ import argparse
 import collections
 import json
 import random
+import re
 
 import heuristic_guess
 import lexicon
@@ -38,12 +39,14 @@ def expand_graph(is_hard_mode, candidates, is_random, depth):
             if resp != "22222"
         },
         "depth": depth,
-        "candidates": candidates,
+        "candidates": sorted(candidates),
     }
 
 
-def main(is_hard_mode, is_resticted, is_random):
+def main(is_hard_mode, is_resticted, is_random, regexp):
     initial_set = lexicon.daily_words if is_resticted else lexicon.lexicon
+    if regexp:
+        initial_set = [w for w in initial_set if re.search(regexp, w)]
     res = expand_graph(is_hard_mode, initial_set, is_random, 0)
     print(json.dumps(res))
 
@@ -65,5 +68,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Random guesses",
     )
+    parser.add_argument(
+        "--regexp",
+        action="store",
+        help="Regular expression filter. Applied after --restricted",
+        type=str,
+    )
     args = parser.parse_args()
-    main(args.hard_mode, args.restricted, args.random)
+    main(args.hard_mode, args.restricted, args.random, args.regexp)
