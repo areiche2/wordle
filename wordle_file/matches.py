@@ -1,22 +1,19 @@
-import itertools
+import functools
 
 CORRECT = "2"
 PRESENT = "1"
 ABSENT = "0"
 
-_collector = {
-    t: "".join(t)
-    for t in itertools.product(
-        (ABSENT, PRESENT, CORRECT),
-        repeat=5,
-    )
-}
+
+@functools.cache
+def _collect(t):
+    return "".join(t)
 
 
 def matches(target, guess):
     target_list = list(target)
     guess_list = list(guess)
-    res = [""] * 5
+    res = [""] * len(guess)
 
     for i, c in enumerate(guess):
         if target_list[i] == c:
@@ -32,7 +29,7 @@ def matches(target, guess):
                 res[i] = ABSENT
             else:
                 res[i] = PRESENT
-    return _collector[tuple(res)]
+    return _collect(tuple(res))
 
 
 def matches_table(guesses, targets):

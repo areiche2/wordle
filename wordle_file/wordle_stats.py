@@ -2,6 +2,7 @@ import argparse
 import collections
 import itertools
 import json
+import re
 
 import matches
 
@@ -12,7 +13,7 @@ def simulate(node, target):
         guess = node["guess"]
         resp = matches.matches(target=target, guess=guess)
         res.append((guess, resp, len(node["candidates"])))
-        if resp == "22222":
+        if re.fullmatch("2+", resp):
             return res
         node = node["response"][resp]
     return []

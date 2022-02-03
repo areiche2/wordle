@@ -4,10 +4,10 @@ import json
 import re
 
 
-def get_response():
+def get_response(n):
     while True:
         resp = input("\t* Response (enter to quit): ")
-        if not resp or re.fullmatch("[012]{5}", resp):
+        if not resp or len(resp) != n or re.fullmatch("[012]+", resp):
             return resp
 
 
@@ -25,8 +25,8 @@ def main(src):
         if len(candidates) == 1:
             return
         while True:
-            resp = get_response()
-            if not resp or resp == "22222":
+            resp = get_response(len(node["guess"]))
+            if not resp or re.fullmatch("2+", resp):
                 print("\t* Solved")
                 return
             if resp in node["response"]:
