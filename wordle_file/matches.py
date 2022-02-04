@@ -14,13 +14,11 @@ def matches(target, guess):
     target_list = list(target)
     guess_list = list(guess)
     res = [""] * len(guess)
-
     for i, c in enumerate(guess):
         if target_list[i] == c:
             target_list[i] = None
             guess_list[i] = None
             res[i] = CORRECT
-
     for i, c in enumerate(guess_list):
         if c is not None:
             try:
