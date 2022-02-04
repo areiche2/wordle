@@ -1,10 +1,9 @@
 import itertools
-import json
 
 
 def ndigit(n):
     if n == 1:
-        yield from "0123456789"
+        yield from "123456789"
         return
     for ld in "123456789":
         for rem in itertools.product("0123456789", repeat=n - 1):
@@ -12,7 +11,7 @@ def ndigit(n):
 
 
 def lhs(n):
-    for i in range(1, n + 1):
+    for i in range(1, 3, n + 1):
         for num in ndigit(i):
             yield from lhs_rec(n - i, [num])
             # yield from lhs_rec(n - i - 1, ["-" + num])
@@ -44,9 +43,9 @@ def eqs(n):
 
 
 def main(n):
-    res = list(eqs(n))
-    print(json.dumps(res, indent=4))
+    for e in eqs(n):
+        print(e)
 
 
 if __name__ == "__main__":
-    main(6)
+    main(9)
