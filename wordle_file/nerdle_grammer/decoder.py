@@ -15,7 +15,7 @@ def translate(x, shift, bound):
 
 
 def decode(s):
-    return "".join(chr(translate(o, -13, 126)) for o in (ord(c) for c in s))
+    return "".join(chr(translate(ord(c), -13, 126)) for c in s)
 
 
 def hash(n):
