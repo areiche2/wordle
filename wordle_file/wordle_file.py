@@ -36,7 +36,7 @@ def expand_graph(is_hard_mode, candidates, is_random, depth):
         "response": {
             resp: expand_graph(is_hard_mode, grp, is_random, depth + 1)
             for resp, grp in gather.items()
-            if resp != "22222"
+            if not re.fullmatch("2+", resp)
         },
         "depth": depth,
         "candidates": sorted(candidates),
