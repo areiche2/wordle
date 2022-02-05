@@ -34,7 +34,6 @@ def main(src):
             if resp in node["response"]:
                 break
             print(f"\t* {resp.translate(trans)} not found. Please try again.")
-
         node = node["response"][resp]
 
 
