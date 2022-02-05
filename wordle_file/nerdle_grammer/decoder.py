@@ -6,7 +6,8 @@ import urllib.request
 
 URL = "https://www.nerdlegame.com"
 # Code use 1642636800
-ORIGIN_DATE = datetime.date(2022, 1, 21)
+# Dates are UTC
+ORIGIN_DATE = datetime.date(2022, 1, 20)
 
 
 def translate(x, shift, bound):
@@ -34,11 +35,16 @@ def row(offset):
     return (
         offset,
         hash(offset),
-        str(datetime.timedelta(days=i) + ORIGIN_DATE),
+        str(datetime.timedelta(days=offset) + ORIGIN_DATE),
         req("words", offset),
         req("miniwords", offset),
     )
 
 
-for i in range(1, 17000):
-    print(*row(i), sep="\t")
+def main(n):
+    for i in range(n):
+        print(*row(i), sep="\t")
+
+
+if __name__ == "__main__":
+    main(500)
