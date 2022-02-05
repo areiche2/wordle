@@ -7,12 +7,14 @@ import re
 def get_response(n):
     while True:
         resp = input("\t* Response (enter to quit): ")
-        if not resp or len(resp) != n or re.fullmatch("[012]+", resp):
+        if len(resp) == n and re.fullmatch("[012]+", resp):
             return resp
+        print("\t* Not recognized.")
 
 
 def main(src):
     print("Responses: absent = 0, present = 1, correct = 2")
+    trans = str.maketrans("012", "⬛🟨🟩")
     node = json.load(src)
     for i in itertools.count(start=1):
         print(f"# Round {i}")
@@ -31,7 +33,7 @@ def main(src):
                 return
             if resp in node["response"]:
                 break
-            print("\t* Invalid. Did you make a mistake. Please try again.")
+            print(f"\t* {resp.translate(trans)} not found. Please try again.")
 
         node = node["response"][resp]
 
