@@ -7,6 +7,8 @@ import re
 def get_response(n):
     while True:
         resp = input("\t* Response (enter to quit): ")
+        if not resp:
+            return None
         if len(resp) == n and re.fullmatch("[012]+", resp):
             return resp
         print("\t* Not recognized.")
@@ -28,7 +30,10 @@ def main(src):
             return
         while True:
             resp = get_response(len(node["guess"]))
-            if not resp or re.fullmatch("2+", resp):
+            if resp is None:
+                print("\t* Exit")
+                return
+            if re.fullmatch("2+", resp):
                 print("\t* Solved")
                 return
             if resp in node["response"]:

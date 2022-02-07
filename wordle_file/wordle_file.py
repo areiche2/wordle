@@ -49,8 +49,7 @@ def expand_graph(lexicon, is_hard_mode, candidates, is_random, depth):
     }
 
 
-def main(lexicon, is_hard_mode, is_random, regexp):
-    candidates = lexicon
+def main(lexicon, candidates, is_hard_mode, is_random, regexp):
     if regexp:
         candidates = [w for w in candidates if re.search(regexp, w)]
     res = expand_graph(
@@ -68,7 +67,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--hard-mode",
         action="store_true",
-        help="JSON file with responses",
+        help="Only guess potential candidates",
     )
     parser.add_argument(
         "--random",
@@ -85,49 +84,54 @@ if __name__ == "__main__":
     grp.add_argument(
         "--wordle-daily",
         action="store_const",
-        const=lexicons.wordle.daily_words,
-        dest="lexicon",
+        const=(
+            lexicons.wordle.lexicon,
+            lexicons.wordle.daily_words,
+        ),
+        dest="solution_space",
         help="Wordle Daily Words",
     )
     grp.add_argument(
         "--wordle",
         action="store_const",
-        const=lexicons.wordle.lexicon,
-        dest="lexicon",
+        const=(lexicons.wordle.lexicon,) * 2,
+        dest="solution_space",
         help="Wordle. This is the default.",
     )
     grp.add_argument(
         "--wordle-6",
         action="store_const",
-        const=lexicons.wordle_6.lexicon,
-        dest="lexicon",
+        const=(lexicons.wordle_6.lexicon,) * 2,
+        dest="solution_space",
         help="6 Letter Wordle",
     )
     grp.add_argument(
         "--primes",
         action="store_const",
-        const=lexicons.primes.primes,
-        dest="lexicon",
+        const=(lexicons.primes.primes,) * 2,
+        dest="solution_space",
         help="5 digit primes",
     )
     grp.add_argument(
         "--nerdle",
         action="store_const",
-        const=lexicons.nerdle.columns_8,
-        dest="lexicon",
+        const=(lexicons.nerdle.columns_8,) * 2,
+        dest="solution_space",
         help="Nerdle",
     )
     grp.add_argument(
         "--mini-nerdle",
         action="store_const",
-        const=lexicons.nerdle.columns_6,
-        dest="lexicon",
+        const=(lexicons.nerdle.columns_6,) * 2,
+        dest="solution_space",
         help="Mini Nerdle",
     )
-    parser.set_defaults(lexicon=lexicons.wordle.lexicon)
+    parser.set_defaults(lexicon=(lexicons.wordle.lexicon,) * 2)
     args = parser.parse_args()
+    lexicon, candidates = args.solution_space
     main(
-        args.lexicon,
+        lexicon,
+        candidates,
         args.hard_mode,
         args.random,
         args.regexp,
