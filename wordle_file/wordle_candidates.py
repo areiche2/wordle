@@ -31,7 +31,7 @@ def main(
         if len(candidates) == 1:
             print(f"* Guess {candidates[0]}")
             return
-        guess = get_response("Guess", lambda s: s in lexicon)
+        guess = get_response("Guess", lambda s: len(s) == n)
         if not guess:
             return
         resp = get_response(
